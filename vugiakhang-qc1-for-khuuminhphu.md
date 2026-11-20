@@ -9,7 +9,7 @@ Số ảnh kiểm: 6 (+ 0 ảnh thêm, ghi riêng)   Số nhãn đã kiểm (sha
 | Mã | Loại lỗi | Số mục kiểm | Số lỗi | Mức |
 | --- | --- | ---: | ---: | --- |
 | QC1-01 tag camera | sai thuộc tính / bỏ sót | 6 | 0 | nặng |
-| QC1-02 đủ L1, R1 | bỏ sót | 12 | 2 | nặng |
+| QC1-02 đủ L1, R1 | bỏ sót | 12 | 0 | nặng |
 | QC1-03 position | sai thuộc tính / thừa | 16 | 0 | nặng |
 | QC1-04 tâm vạch, chiều, điểm dừng | sai phạm vi / bỏ sót | 16 | 0 | chính |
 | QC1-05 vạch đứt, che | sai phạm vi / sai thuộc tính | 16 | 2 | chính |
@@ -24,10 +24,8 @@ Số ảnh kiểm: 6 (+ 0 ảnh thêm, ghi riêng)   Số nhãn đã kiểm (sha
 ## Danh sách lỗi (mỗi lỗi một dòng)
 | # | Mã | Ảnh | Nhãn (label, id) | Mức | Mô tả ngắn |
 | --- | --- | --- | --- | --- | --- |
-| 1 | QC1-02 | A07 | lane | nặng | Thiếu vạch L1 (vạch biên bên trái của làn xe chạy) |
-| 2 | QC1-02 | A09 | lane | nặng | Thiếu vạch R1 (vạch sơn trắng đứt phân làn bên phải xe chạy) |
-| 3 | QC1-05 | A04 | lane | chính | Vạch đôi vàng phân làn xe chạy bị vẽ tách thành 2 polyline cùng mang position=L1 (theo Guideline phải gộp thành 1 polyline có kind="double") |
-| 4 | QC1-05 | A09 | lane | chính | 2 polyline cùng mang position=L2 (gán nhầm thuộc tính làn) |
+| 1 | QC1-05 | A04 | lane | chính | Vạch đôi vàng phân làn xe chạy bị vẽ tách thành 2 polyline cùng mang position=L1 (theo Guideline phải gộp thành 1 polyline có kind="double") |
+| 2 | QC1-05 | A11 | lane | chính | 2 polyline cùng mang thuộc tính position=L1 (cần chuẩn hóa lại position cho vạch phân làn liền kề) |
 
 *Ghi chú ảnh kiểm không lỗi:*  
 - Ảnh **A01** và **B01**: Đầy đủ các nhãn (lane, drivable, road_curb, crosswalk), thuộc tính chuẩn, đủ 4 tag ảnh, không có lỗi.
@@ -35,12 +33,14 @@ Số ảnh kiểm: 6 (+ 0 ảnh thêm, ghi riêng)   Số nhãn đã kiểm (sha
 ## Ca mơ hồ
 | Ảnh | Câu hỏi cho lead | Lời đáp (nếu có) |
 | --- | --- | --- |
-| A05 | Không thấy vạch sơn L1 và R1 trên mặt đường | Xác nhận không vẽ L1/R1, chỉ vẽ drivable và road_curb theo ngoại lệ của Guideline |
+| A05 | Không thấy vạch sơn L1 và R1 trên mặt đường | Xác nhận không vẽ L1/R1, chỉ vẽ drivable và road_curb theo ngoại lệ của Guideline (miễn trừ QC1-02) |
 | A06 | Mép phải đường là vỉa hè, không có sơn kẻ vạch R1 | Xác nhận miễn trừ R1, gán road_curb theo guideline |
+| A07 | Mép trái làn đường là vỉa hè bê tông/gờ đá, thực tế không thấy vạch sơn L1 | Xác nhận miễn trừ QC1-02, gán road_curb đúng thực tế, không bịa thêm vạch lane L1 |
+| A09 | Mép ngoài bên phải làn xe chạy không có vạch sơn R1 (chỉ có lề cỏ/gờ đá) | Xác nhận miễn trừ QC1-02 cho R1, chỉ gán road_curb theo đúng hiện trạng ảnh |
 
 ## Quyết định
-Lỗi nặng: 2   Lỗi chính: 2 / 65 nhãn = 3.08 %   Lỗi nhẹ: 0   Ca chờ lead: 0  
-Quyết định (Release / Hold / Rework): Rework  
-Lý do (theo luật của phiếu): Còn 2 lỗi nặng QC1-02 ở ảnh A07 (thiếu L1) và A09 (thiếu R1). Cần chuyển học viên Khưu Minh Phú sửa lại trong khung giờ buffer trước khi Release.
+Lỗi nặng: 0   Lỗi chính: 2 / 65 nhãn = 3.08 %   Lỗi nhẹ: 0   Ca chờ lead: 0  
+Quyết định (Release / Hold / Rework): Release  
+Lý do (theo luật của phiếu): Không có lỗi nặng (các trường hợp thiếu vạch ở A05, A06, A07, A09 đều được xác nhận miễn trừ hợp lệ do thực tế mặt đường không có vạch sơn); tỉ lệ lỗi chính 3.08% (< 5%) đạt tiêu chuẩn nghiệm thu. Đề nghị bạn Phú chỉnh gộp vạch đôi A04 trong khung giờ buffer để bài đạt điểm tối đa.
 
 Loại lỗi: bỏ sót = thiếu nhãn phải có; thừa = gán cái không phải đối tượng; sai phạm vi = hình lệch, sai chiều, dừng sai chỗ, tràn vùng. Ba loại này theo cách chia lỗi gán nhãn của ISO/IEC 5259-4 (mục 8.4.2); "sai thuộc tính" và "lỗi file" là khóa học thêm. Cách xếp mức: [thang mức lỗi](../docs/qc_severity_road_v1.0.md).
